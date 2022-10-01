@@ -16,30 +16,40 @@ public class Util {
     private static Connection con;
     private static SessionFactory sessionFactory;
 
-    static {
-        try {
-            Properties prop= new Properties();
-            prop.setProperty("hibernate.connection.url", URL);
-            prop.setProperty("hibernate.connection.username", USERNAME);
-            prop.setProperty("hibernate.connection.password", PASSWORD);
-            prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
+    private static SessionFactory initSF() {
+        Properties prop= new Properties();
+        prop.setProperty("hibernate.connection.url", URL);
+        prop.setProperty("hibernate.connection.username", USERNAME);
+        prop.setProperty("hibernate.connection.password", PASSWORD);
+        prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
 
-            sessionFactory = new Configuration()
-                    .addPackage("com.concretepage.persistence")
-                    .addProperties(prop)
-                    .addAnnotatedClass(User.class)
-                    .buildSessionFactory();
-            con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        return new Configuration()
+                .addPackage("com.concretepage.persistence")
+                .addProperties(prop)
+                .addAnnotatedClass(User.class)
+                .buildSessionFactory();
+    }
+
+    private static Connection initCon() {
+        try {
+            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        return null;
     }
 
     public static Connection getCon() {
+        if (con == null) {
+            con = initCon();
+        }
         return con;
     }
 
     public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            sessionFactory = initSF();
+        }
         return sessionFactory;
     }
 }

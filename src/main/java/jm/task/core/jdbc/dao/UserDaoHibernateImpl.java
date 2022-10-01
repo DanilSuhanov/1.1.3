@@ -15,52 +15,77 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        session.beginTransaction();
-        session.createSQLQuery("create TABLE IF NOT EXISTS users(Id INT PRIMARY KEY AUTO_INCREMENT, age INT, name VARCHAR(30), lastName VARCHAR(30));").executeUpdate();
-        session.getTransaction().commit();
+        try {
+            session.beginTransaction();
+            session.createSQLQuery("create TABLE IF NOT EXISTS users(Id INT PRIMARY KEY AUTO_INCREMENT, age INT, name VARCHAR(30), lastName VARCHAR(30));").executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void dropUsersTable() {
-        session.beginTransaction();
-        session.createSQLQuery("drop table if exists users;").executeUpdate();
-        session.getTransaction().commit();
+        try {
+            session.beginTransaction();
+            session.createSQLQuery("drop table if exists users;").executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        session.beginTransaction();
-        User user = User.builder()
-                .name(name)
-                .lastName(lastName)
-                .age(age)
-                .build();
-        session.save(user);
-        session.getTransaction().commit();
+        try {
+            session.beginTransaction();
+            User user = User.builder()
+                    .name(name)
+                    .lastName(lastName)
+                    .age(age)
+                    .build();
+            session.save(user);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void removeUserById(long id) {
-        session.beginTransaction();
-        User deleteUser = session.find(User.class, id);
-        if (deleteUser != null) {
-            session.remove(deleteUser);
+        try {
+            session.beginTransaction();
+            User deleteUser = session.find(User.class, id);
+            if (deleteUser != null) {
+                session.remove(deleteUser);
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        session.getTransaction().commit();
     }
 
     @Override
     public List<User> getAllUsers() {
-        session.beginTransaction();
-        List<User> userList = session.createQuery("from User", User.class).getResultList();
-        session.getTransaction().commit();
+        List<User> userList = null;
+        try {
+            session.beginTransaction();
+            userList = session.createQuery("from User", User.class).getResultList();
+            session.getTransaction().rollback();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return userList;
     }
 
     @Override
     public void cleanUsersTable() {
-        session.beginTransaction();
-        session.createQuery("delete from User").executeUpdate();
-        session.getTransaction().commit();
+        try {
+            session.beginTransaction();
+            session.createQuery("delete from User").executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
