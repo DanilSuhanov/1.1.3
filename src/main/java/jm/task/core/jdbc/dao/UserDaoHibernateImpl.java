@@ -61,8 +61,10 @@ public class UserDaoHibernateImpl implements UserDao {
             User deleteUser = session.find(User.class, id);
             if (deleteUser != null) {
                 session.remove(deleteUser);
+                session.getTransaction().commit();
+            } else {
+                session.getTransaction().rollback();
             }
-            session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
             System.out.println(e.getMessage());
