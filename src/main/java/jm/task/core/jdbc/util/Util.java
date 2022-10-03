@@ -16,39 +16,30 @@ public class Util {
     private static Connection con;
     private static SessionFactory sessionFactory;
 
-    private static SessionFactory initSF() {
-        Properties prop= new Properties();
-        prop.setProperty("hibernate.connection.url", URL);
-        prop.setProperty("hibernate.connection.username", USERNAME);
-        prop.setProperty("hibernate.connection.password", PASSWORD);
-        prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
-
-        return new Configuration()
-                .addPackage("com.concretepage.persistence")
-                .addProperties(prop)
-                .addAnnotatedClass(User.class)
-                .buildSessionFactory();
-    }
-
-    private static Connection initCon() {
-        try {
-            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
     public static Connection getCon() {
         if (con == null) {
-            con = initCon();
+            try {
+                con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
         }
         return con;
     }
 
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
-            sessionFactory = initSF();
+            Properties prop= new Properties();
+            prop.setProperty("hibernate.connection.url", URL);
+            prop.setProperty("hibernate.connection.username", USERNAME);
+            prop.setProperty("hibernate.connection.password", PASSWORD);
+            prop.setProperty("dialect", "org.hibernate.dialect.MySQLDialect");
+
+            sessionFactory = new Configuration()
+                    .addPackage("com.concretepage.persistence")
+                    .addProperties(prop)
+                    .addAnnotatedClass(User.class)
+                    .buildSessionFactory();
         }
         return sessionFactory;
     }

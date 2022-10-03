@@ -20,6 +20,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createSQLQuery("create TABLE IF NOT EXISTS users(Id INT PRIMARY KEY AUTO_INCREMENT, age INT, name VARCHAR(30), lastName VARCHAR(30));").executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
         }
     }
@@ -31,6 +32,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createSQLQuery("drop table if exists users;").executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
         }
     }
@@ -47,6 +49,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.save(user);
             session.getTransaction().commit();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
         }
     }
@@ -61,6 +64,7 @@ public class UserDaoHibernateImpl implements UserDao {
             }
             session.getTransaction().commit();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
         }
     }
@@ -73,6 +77,7 @@ public class UserDaoHibernateImpl implements UserDao {
             userList = session.createQuery("from User", User.class).getResultList();
             session.getTransaction().rollback();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
         }
         return userList;
@@ -85,6 +90,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createQuery("delete from User").executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
+            session.getTransaction().rollback();
             System.out.println(e.getMessage());
         }
     }
